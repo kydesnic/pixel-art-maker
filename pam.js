@@ -1,7 +1,6 @@
-function Canvas(width, height) {
-    const canvas = { width: width, height: height };
+function Canvas(width, height, element) {
+    const canvas = { width: width, height: height, element: element };
 
-    canvas.element = document.getElementById('canvas');
     canvas.element.innerHTML = '';
     canvas.element.style.backgroundColor = '#e5e5e5';
 
@@ -28,6 +27,8 @@ function Canvas(width, height) {
     canvas.element.addEventListener('click', function(ev) {
         ev.target.style.backgroundColor = '#ff0000';
     });
+
+    return canvas;
 }
 
-let canvas = Canvas(4, 4);
+let canvas = Canvas(100, 50, document.getElementById('canvas'));
