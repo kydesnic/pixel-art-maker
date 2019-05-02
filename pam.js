@@ -24,6 +24,10 @@ function Canvas(width, height) {
         }
         canvas.element.appendChild(row);
     }
+
+    canvas.element.addEventListener('click', function(ev) {
+        ev.target.style.backgroundColor = '#ff0000';
+    });
 }
 
 let canvas = Canvas(4, 4);
