@@ -2,6 +2,7 @@ function Canvas(width, height, element) {
     const canvas = { width: width, height: height, element: element };
 
     canvas.element.innerHTML = '';
+    canvas.element.style.textAlign = 'center';
 
     const pixelSize = '8px';
 
@@ -36,8 +37,9 @@ function Palette(element) {
     const palette = { element: element };
 
     element.style.padding = '1em';
+    element.style.lineHeight = '0';
 
-    const sampleSize = '40px';
+    const sampleSize = '56px';
 
     const colorSample = document.createElement('div');
     colorSample.style.display = 'inline-block';
@@ -64,7 +66,7 @@ function Palette(element) {
         colorBlock.style.backgroundColor = color;
         colorBlock.style.width = blockSize;
         colorBlock.style.height = blockSize;
-        colorBlock.style.margin = '2px';
+        colorBlock.style.margin = '4px';
         colorBlock.style.borderRadius = '10px';
         colorBlock.className = 'ColorBlock';
         element.appendChild(colorBlock);
