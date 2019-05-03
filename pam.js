@@ -16,6 +16,7 @@ function Canvas(width, height, element) {
             pixel.style.backgroundColor = '#ffffff';
             pixel.style.display = 'inline-block';
             pixel.style.border = '1px solid #e5e5e5';
+            pixel.className = 'Pixel';
 
             row.appendChild(pixel);
         }
@@ -23,7 +24,9 @@ function Canvas(width, height, element) {
     }
 
     canvas.element.addEventListener('click', function(ev) {
-        ev.target.style.backgroundColor = palette.currentColor;
+        if (ev.target.className == 'Pixel') {
+            ev.target.style.backgroundColor = palette.currentColor;
+        }
     });
 
     return canvas;
