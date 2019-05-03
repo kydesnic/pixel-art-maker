@@ -1,33 +1,42 @@
+function Pixel() {
+    const pixelSize = '8px';
+
+    const pixel = document.createElement('div');
+    pixel.style.width = pixelSize;
+    pixel.style.height = pixelSize;
+    pixel.style.backgroundColor = palette.currentColor;
+    pixel.style.display = 'inline-block';
+    pixel.style.border = '1px solid #e5e5e5';
+    pixel.className = 'Pixel';
+
+    pixel.paint = function(color) {
+        this.style.backgroundColor = color;
+        this.style.borderColor = color;
+    }
+
+    return pixel;
+}
+
 function Canvas(width, height, element) {
     const canvas = { width: width, height: height, element: element };
 
     canvas.element.innerHTML = '';
     canvas.element.style.textAlign = 'center';
 
-    const pixelSize = '8px';
-
     for (let y = 0; y < height; ++y) {
         const row = document.createElement('div');
         row.style.lineHeight = '0';
 
         for (let x = 0; x < width; ++x) {
-            const pixel = document.createElement('div');
-            pixel.style.width = pixelSize;
-            pixel.style.height = pixelSize;
-            pixel.style.backgroundColor = '#ffffff';
-            pixel.style.display = 'inline-block';
-            pixel.style.border = '1px solid #e5e5e5';
-            pixel.className = 'Pixel';
-
+            const pixel = new Pixel();
             row.appendChild(pixel);
         }
         canvas.element.appendChild(row);
     }
 
     canvas.element.addEventListener('click', function(ev) {
-        if (ev.target.className == 'Pixel') {
-            ev.target.style.backgroundColor = palette.currentColor;
-            ev.target.style.borderColor = palette.currentColor;
+        if (ev.target.paint != null) {
+            ev.target.paint(palette.currentColor);
         }
     });
 
@@ -85,5 +94,5 @@ function Palette(element) {
     return palette;
 }
 
-let canvas = new Canvas(64, 50, document.getElementById('canvas'));
 let palette = new Palette(document.getElementById('palette'));
+let canvas = new Canvas(64, 50, document.getElementById('canvas'));
