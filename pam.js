@@ -27,6 +27,7 @@ function Canvas(width, height, element) {
     canvas.element.addEventListener('click', function(ev) {
         if (ev.target.className == 'Pixel') {
             ev.target.style.backgroundColor = palette.currentColor;
+            ev.target.style.borderColor = palette.currentColor;
         }
     });
 
