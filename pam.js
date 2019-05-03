@@ -1,3 +1,5 @@
+const leftMouseButton = 0;
+
 function Pixel() {
     const pixelSize = '8px';
 
@@ -23,6 +25,8 @@ function Canvas(width, height, element) {
     canvas.element.innerHTML = '';
     canvas.element.style.textAlign = 'center';
 
+    canvas.isPenDown = false;
+
     for (let y = 0; y < height; ++y) {
         const row = document.createElement('div');
         row.style.lineHeight = '0';
@@ -34,9 +38,23 @@ function Canvas(width, height, element) {
         canvas.element.appendChild(row);
     }
 
-    canvas.element.addEventListener('click', function(ev) {
-        if (ev.target.paint != null) {
+    canvas.element.addEventListener('mousedown', function(ev) {
+        if (ev.target.paint != null && ev.button == leftMouseButton) {
             ev.target.paint(palette.currentColor);
+            canvas.isPenDown = true;
+            ev.preventDefault();
+        }
+    });
+
+    canvas.element.addEventListener('mousemove', function(ev) {
+        if (canvas.isPenDown && ev.target.paint != null) {
+            ev.target.paint(palette.currentColor);
+        }
+    });
+
+    canvas.element.addEventListener('mouseup', function(ev) {
+        if (canvas.isPenDown && ev.button == leftMouseButton) {
+            canvas.isPenDown = false;
         }
     });
 
