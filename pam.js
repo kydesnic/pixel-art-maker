@@ -15,8 +15,13 @@ function Pixel() {
     pixel.className = 'Pixel';
 
     pixel.paint = function(color) {
-        this.style.backgroundColor = color;
-        this.style.borderColor = color;
+        if (color == '') {
+            this.erase();
+        }
+        else {
+            this.style.backgroundColor = color;
+            this.style.borderColor = color;
+        }
     }
 
     pixel.sibling = function(dx, dy) {
@@ -30,6 +35,13 @@ function Pixel() {
     pixel.erase = function() {
         this.style.backgroundColor = emptyColor;
         this.style.borderColor = emptyBorder;
+    }
+
+    pixel.getColor = function() {
+        if (this.style.backgroundColor == this.style.borderColor) {
+            return this.style.backgroundColor;
+        }
+        return '';
     }
 
     return pixel;
@@ -221,6 +233,26 @@ function erase(pixel) {
     });
 }
 
+function floodfill(pixel, color, oldColor) {
+    if (pixel == null) {
+        return;
+    }
+    if (oldColor == null) {
+        oldColor = pixel.getColor();
+    }
+    if (color == oldColor) {
+        return;
+    }
+    if (pixel.getColor() != oldColor) {
+        return;
+    }
+    pixel.paint(color);
+    floodfill(pixel.sibling(0, 1), color, oldColor);
+    floodfill(pixel.sibling(0, -1), color, oldColor);
+    floodfill(pixel.sibling(-1, 0), color, oldColor);
+    floodfill(pixel.sibling(1, 0), color, oldColor);
+}
+
 function ToolBar(element) {
     const bar = { element: element };
 
@@ -236,6 +268,8 @@ function ToolBar(element) {
         element.appendChild(btn);
         return btn;
     }
+
+    createButton('floodfill.png', floodfill);
 
     createButton('solid7.png', paintSolid7);
     createButton('solid5.png', paintSolid5);
