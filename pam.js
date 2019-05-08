@@ -105,11 +105,13 @@ function Palette(element) {
 
     const sampleSize = '56px';
 
+    const startColor = '#ffffff';
+
     const colorSample = document.createElement('div');
     colorSample.style.display = 'inline-block';
     colorSample.style.width = sampleSize;
     colorSample.style.height = sampleSize;
-    colorSample.style.backgroundColor = '#ffffff';
+    colorSample.style.backgroundColor = startColor;
     colorSample.style.float = 'left';
     colorSample.style.marginRight = '1em';
     element.appendChild(colorSample);
@@ -138,12 +140,27 @@ function Palette(element) {
 
     palette.currentColor = colorSample.style.backgroundColor;
 
+    changeColor = function(color) {
+        palette.currentColor = color;
+        colorSample.style.backgroundColor = color;
+    }
+
     element.addEventListener('click', function(ev) {
         if (ev.target.className == 'ColorBlock') {
-            palette.currentColor = ev.target.style.backgroundColor;
-            colorSample.style.backgroundColor = palette.currentColor;
+            changeColor(ev.target.style.backgroundColor);
         }
     });
+
+    const picker = document.createElement('input');
+    picker.setAttribute('type', 'color');
+    picker.setAttribute('value', startColor);
+    picker.style.verticalAlign = 'top';
+    picker.style.marginLeft = '2ex';
+    picker.style.marginTop = '0.3ex';
+    picker.addEventListener('change', function() {
+        changeColor(picker.value);
+    });
+    element.appendChild(picker);
 
     return palette;
 }
