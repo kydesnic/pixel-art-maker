@@ -3,12 +3,15 @@ const leftMouseButton = 0;
 function Pixel() {
     const pixelSize = '8px';
 
+    const emptyColor = '#ffffff';
+    const emptyBorder = '#e5e5e5';
+
     const pixel = document.createElement('div');
     pixel.style.width = pixelSize;
     pixel.style.height = pixelSize;
-    pixel.style.backgroundColor = palette.currentColor;
+    pixel.style.backgroundColor = emptyColor;
     pixel.style.display = 'inline-block';
-    pixel.style.border = '1px solid #e5e5e5';
+    pixel.style.border = `1px solid ${emptyBorder}`;
     pixel.className = 'Pixel';
 
     pixel.paint = function(color) {
@@ -22,6 +25,11 @@ function Pixel() {
             return line.childNodes[this.xIndex + dx];
         }
         return null;
+    }
+
+    pixel.erase = function() {
+        this.style.backgroundColor = emptyColor;
+        this.style.borderColor = emptyBorder;
     }
 
     return pixel;
@@ -128,16 +136,20 @@ function Palette(element) {
     return palette;
 }
 
+function square3(pixel) {
+    return [
+        pixel, pixel.sibling(-1, -1), pixel.sibling(-1, 0),
+        pixel.sibling(-1, 1), pixel.sibling(0, -1), pixel.sibling(0, 1),
+        pixel.sibling(1, -1), pixel.sibling(1, 0), pixel.sibling(1, 1)
+    ];
+}
+
 function paintSolid1(pixel, color) {
     pixel.paint(color);
 }
 
 function paintSolid3(pixel, color) {
-    [
-        pixel, pixel.sibling(-1, -1), pixel.sibling(-1, 0),
-        pixel.sibling(-1, 1), pixel.sibling(0, -1), pixel.sibling(0, 1),
-        pixel.sibling(1, -1), pixel.sibling(1, 0), pixel.sibling(1, 1)
-    ].forEach(function(p) {
+    square3(pixel).forEach(function(p) {
         if (p != null) {
             p.paint(color);
         }
@@ -201,6 +213,14 @@ function paintAir(pixel, color, diameter, count) {
     }
 }
 
+function erase(pixel) {
+    square3(pixel).forEach(function(p) {
+        if (p != null) {
+            p.erase();
+        }
+    });
+}
+
 function ToolBar(element) {
     const bar = { element: element };
 
@@ -231,6 +251,8 @@ function ToolBar(element) {
     createButton('air7.png', function(pixel, color) {
         paintAir(pixel, color, 7, 10);
     });
+
+    createButton('erase.png', erase);
 
     bar.currentTool = s1;
     bar.currentTool.style.border = '1px solid #000000';
