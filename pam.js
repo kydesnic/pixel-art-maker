@@ -68,6 +68,12 @@ function Canvas(width, height, element) {
         }
     });
 
+    canvas.element.addEventListener('mouseleave', function() {
+        if (canvas.isPenDown) {
+            canvas.isPenDown = false;
+        }
+    });
+
     return canvas;
 }
 
