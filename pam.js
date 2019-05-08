@@ -16,6 +16,14 @@ function Pixel() {
         this.style.borderColor = color;
     }
 
+    pixel.sibling = function(dx, dy) {
+        const line = this.parentNode.parentNode.childNodes[this.yIndex + dy];
+        if (line != null) {
+            return line.childNodes[this.xIndex + dx];
+        }
+        return null;
+    }
+
     return pixel;
 }
 
@@ -33,6 +41,8 @@ function Canvas(width, height, element) {
 
         for (let x = 0; x < width; ++x) {
             const pixel = new Pixel();
+            pixel.xIndex = x;
+            pixel.yIndex = y;
             row.appendChild(pixel);
         }
         canvas.element.appendChild(row);
@@ -40,15 +50,15 @@ function Canvas(width, height, element) {
 
     canvas.element.addEventListener('mousedown', function(ev) {
         if (ev.target.paint != null && ev.button == leftMouseButton) {
-            ev.target.paint(palette.currentColor);
-            canvas.isPenDown = true;
             ev.preventDefault();
+            canvas.isPenDown = true;
+            toolBar.currentTool.paint(ev.target, palette.currentColor);
         }
     });
 
     canvas.element.addEventListener('mousemove', function(ev) {
         if (canvas.isPenDown && ev.target.paint != null) {
-            ev.target.paint(palette.currentColor);
+            toolBar.currentTool.paint(ev.target, palette.currentColor);
         }
     });
 
@@ -112,5 +122,98 @@ function Palette(element) {
     return palette;
 }
 
+function paintSolid1(pixel, color) {
+    pixel.paint(color);
+}
+
+function paintSolid3(pixel, color) {
+    [
+        pixel, pixel.sibling(-1, -1), pixel.sibling(-1, 0),
+        pixel.sibling(-1, 1), pixel.sibling(0, -1), pixel.sibling(0, 1),
+        pixel.sibling(1, -1), pixel.sibling(1, 0), pixel.sibling(1, 1)
+    ].forEach(function(p) {
+        if (p != null) {
+            p.paint(color);
+        }
+    });
+}
+
+function paintSolid5(pixel, color) {
+    [
+        pixel, pixel.sibling(-1, -1), pixel.sibling(-1, 0),
+        pixel.sibling(-1, 1), pixel.sibling(0, -1), pixel.sibling(0, 1),
+        pixel.sibling(1, -1), pixel.sibling(1, 0), pixel.sibling(1, 1),
+        pixel.sibling(-2, -1), pixel.sibling(-2, 0), pixel.sibling(-2, 1),
+        pixel.sibling(2, -1), pixel.sibling(2, 0), pixel.sibling(2, 1),
+        pixel.sibling(-1, -2), pixel.sibling(0, -2), pixel.sibling(1, -2),
+        pixel.sibling(-1, 2), pixel.sibling(0, 2), pixel.sibling(1, 2)
+    ].forEach(function(p) {
+        if (p != null) {
+            p.paint(color);
+        }
+    });
+}
+
+function paintSolid7(pixel, color) {
+    [
+        pixel, pixel.sibling(-1, -1), pixel.sibling(-1, 0),
+        pixel.sibling(-1, 1), pixel.sibling(0, -1), pixel.sibling(0, 1),
+        pixel.sibling(1, -1), pixel.sibling(1, 0), pixel.sibling(1, 1),
+        pixel.sibling(-2, -1), pixel.sibling(-2, 0), pixel.sibling(-2, 1),
+        pixel.sibling(2, -1), pixel.sibling(2, 0), pixel.sibling(2, 1),
+        pixel.sibling(-1, -2), pixel.sibling(0, -2), pixel.sibling(1, -2),
+        pixel.sibling(-1, 2), pixel.sibling(0, 2), pixel.sibling(1, 2),
+        pixel.sibling(-2, -2), pixel.sibling(-2, 2), pixel.sibling(2, -2),
+        pixel.sibling(2, 2), pixel.sibling(-3, -2), pixel.sibling(-3, -1),
+        pixel.sibling(-3, 0), pixel.sibling(-3, 1), pixel.sibling(-3, 2),
+        pixel.sibling(3, -2), pixel.sibling(3, 2), pixel.sibling(3, -1),
+        pixel.sibling(3, 1), pixel.sibling(3, 0), pixel.sibling(-2, -3),
+        pixel.sibling(-1, -3), pixel.sibling(0, -3), pixel.sibling(0, -3),
+        pixel.sibling(1, -3), pixel.sibling(2, -3), pixel.sibling(-2, 3),
+        pixel.sibling(-1, 3), pixel.sibling(0, 3), pixel.sibling(1, 3),
+        pixel.sibling(2, 3)
+    ].forEach(function(p) {
+        if (p != null) {
+            p.paint(color);
+        }
+    });
+}
+
+function ToolBar(element) {
+    const bar = { element: element };
+
+    element.style.padding = '1em';
+    element.style.lineHeight = '0';
+    element.style.textAlign = 'center';
+
+    createButton = function(imgSrc, painter) {
+        const btn = document.createElement('img');
+        btn.style.display = 'inline-block';
+        btn.setAttribute('src', imgSrc);
+        btn.paint = painter;
+        element.appendChild(btn);
+        return btn;
+    }
+
+    createButton('solid7.png', paintSolid7);
+    createButton('solid5.png', paintSolid5);
+    createButton('solid3.png', paintSolid3);
+    const s1 = createButton('solid1.png', paintSolid1);
+
+    bar.currentTool = s1;
+    bar.currentTool.style.border = '1px solid #000000';
+
+    element.addEventListener('click', function(ev) {
+        if (ev.target.paint != null) {
+            bar.currentTool.style.border = 'none';
+            bar.currentTool = ev.target;
+            bar.currentTool.style.border = '1px solid #000000';
+        }
+    });
+
+    return bar;
+}
+
 let palette = new Palette(document.getElementById('palette'));
+let toolBar = new ToolBar(document.getElementById('toolBar'));
 let canvas = new Canvas(64, 50, document.getElementById('canvas'));
