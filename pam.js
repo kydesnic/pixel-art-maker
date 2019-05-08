@@ -185,6 +185,22 @@ function paintSolid7(pixel, color) {
     });
 }
 
+function paintAir(pixel, color, diameter, count) {
+    const radius = diameter / 2;
+    const sqrRadius = radius * radius;
+    rand = function(num) {
+        return Math.random() * num;
+    }
+    const p2 = Math.PI * 2;
+    for (let i = 0; i < count; ++i) {
+        const r = rand(radius);
+        const a = rand(p2);
+        const x = Math.round(r * Math.cos(a));
+        const y = Math.round(r * Math.sin(a));
+        pixel.sibling(x, y).paint(color);
+    }
+}
+
 function ToolBar(element) {
     const bar = { element: element };
 
@@ -205,6 +221,16 @@ function ToolBar(element) {
     createButton('solid5.png', paintSolid5);
     createButton('solid3.png', paintSolid3);
     const s1 = createButton('solid1.png', paintSolid1);
+
+    createButton('air3.png', function(pixel, color) {
+        paintAir(pixel, color, 3, 4);
+    });
+    createButton('air5.png', function(pixel, color) {
+        paintAir(pixel, color, 5, 7);
+    });
+    createButton('air7.png', function(pixel, color) {
+        paintAir(pixel, color, 7, 10);
+    });
 
     bar.currentTool = s1;
     bar.currentTool.style.border = '1px solid #000000';
