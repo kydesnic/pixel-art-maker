@@ -103,18 +103,27 @@ function Palette(element) {
     element.style.padding = '1em';
     element.style.lineHeight = '0';
 
+    const changeColor = function(color) {
+        palette.currentColor = color;
+        picker.value = color;
+    }
+
     const sampleSize = '56px';
 
     const startColor = '#ffffff';
 
-    const colorSample = document.createElement('div');
-    colorSample.style.display = 'inline-block';
-    colorSample.style.width = sampleSize;
-    colorSample.style.height = sampleSize;
-    colorSample.style.backgroundColor = startColor;
-    colorSample.style.float = 'left';
-    colorSample.style.marginRight = '1em';
-    element.appendChild(colorSample);
+    const picker = document.createElement('input');
+    picker.setAttribute('type', 'color');
+    picker.setAttribute('value', startColor);
+    picker.style.width = sampleSize;
+    picker.style.height = sampleSize;
+    picker.style.float = 'left';
+    picker.style.marginRight = '1em';
+    picker.style.padding = '6px 0';
+    picker.addEventListener('change', function() {
+        changeColor(picker.value);
+    });
+    element.appendChild(picker);
 
     const blockSize = '20px';
 
@@ -135,32 +144,17 @@ function Palette(element) {
         colorBlock.style.margin = '4px';
         colorBlock.style.borderRadius = '10px';
         colorBlock.className = 'ColorBlock';
+        colorBlock.colorCode = color;
         element.appendChild(colorBlock);
     }
 
-    palette.currentColor = colorSample.style.backgroundColor;
-
-    changeColor = function(color) {
-        palette.currentColor = color;
-        colorSample.style.backgroundColor = color;
-    }
+    palette.currentColor = startColor;
 
     element.addEventListener('click', function(ev) {
         if (ev.target.className == 'ColorBlock') {
-            changeColor(ev.target.style.backgroundColor);
+            changeColor(ev.target.colorCode);
         }
     });
-
-    const picker = document.createElement('input');
-    picker.setAttribute('type', 'color');
-    picker.setAttribute('value', startColor);
-    picker.style.verticalAlign = 'top';
-    picker.style.marginLeft = '2ex';
-    picker.style.marginTop = '0.3ex';
-    picker.addEventListener('change', function() {
-        changeColor(picker.value);
-    });
-    element.appendChild(picker);
 
     return palette;
 }
